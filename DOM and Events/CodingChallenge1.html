@@ -1,0 +1,180 @@
+<!-- JavaScript in the Browser: DOM and Events
+Coding Challenge #1
+Implement a game rest functionality, so that the player can make a new guess!
+Your tasks:
+1. Select the element with the 'again' class and attach a click event handler
+2. In the handler function, restore initial values of the 'score' and
+'secretNumber' variables
+3. Restore the initial conditions of the message, number, score and guess input
+fields
+4. Also restore the original background color (#222) and number width (15rem) -->
+<!-- Hồ Hoàng Vân Anh_2098521 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .number {
+            width: 15rem;
+            height: 15rem;
+            font-size: 10rem;
+            border-radius: 50%;
+            background-color: #eee;
+            color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem auto;
+        }
+        .message, .score {
+            font-size: 2rem;
+        }
+        .guess {
+            font-size: 2rem;
+            padding: 0.5rem;
+            width: 20rem;
+        }
+        button {
+            font-size: 1.5rem;
+            padding: 1rem;
+            margin: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        .again {
+            background-color: #ff0000;
+            color: #fff;
+        }
+        .confirm {
+            background-color: #00ff00;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <p class="message">Start guessing...</p>
+    <div class="number">?</div>
+    <p class="score">100</p>
+    <input class="guess" type="number">
+    <button class="again">Again!</button>
+    <button class="confirm">Confirm</button>
+
+    <script>
+        // Initial values
+        let initialScore = 100;
+        let score = initialScore;
+        let secretNumber = generateRandomNumber();
+
+        // Generate a new random number
+        function generateRandomNumber() {
+            return Math.trunc(Math.random() * 20) + 1;
+        }
+
+        // Select elements
+        function getElements() {
+            return {
+                againButton: document.querySelector('.again'),
+                confirmButton: document.querySelector('.confirm'),
+                scoreElement: document.querySelector('.score'),
+                messageElement: document.querySelector('.message'),
+                numberElement: document.querySelector('.number'),
+                guessInput: document.querySelector('.guess'),
+                body: document.querySelector('body')
+            };
+        }
+
+        // Restore game state
+        function resetGame() {
+            const { scoreElement, messageElement, numberElement, guessInput, body } = getElements();
+
+            console.log('Resetting the game...');
+            score = initialScore;
+            secretNumber = generateRandomNumber(); // Generate a new random number
+
+            messageElement.textContent = 'Start guessing...';
+            numberElement.textContent = '?';
+            scoreElement.textContent = score;
+            guessInput.value = '';
+            body.style.backgroundColor = '#222';
+            numberElement.style.width = '15rem';
+
+            // Debugging: Log the state after resetting
+            console.log('Game reset to initial state');
+            console.log('New Secret Number:', secretNumber);
+            console.log('Score:', score);
+        }
+
+        // Handle confirm action
+        function confirmAction() {
+            const { guessInput, scoreElement, messageElement, numberElement, body } = getElements();
+            const guess = Number(guessInput.value);
+
+            console.log('Guess:', guess);
+
+            if (!guess || guess < 1 || guess > 20) {
+                alert('Please enter a valid number between 1 and 20.');
+                console.log('Invalid guess entered');
+                return;
+            }
+
+            if (guess === secretNumber) {
+                score += 10; // Increase score for a correct guess
+                messageElement.textContent = 'Correct number!';
+                body.style.backgroundColor = '#60b347'; // Green background for correct guess
+                console.log('Correct guess!');
+            } else {
+                score -= 5; // Decrease score for a wrong guess
+                messageElement.textContent = 'Wrong number!';
+                body.style.backgroundColor = '#ff0000'; // Red background for wrong guess
+                console.log('Wrong guess!');
+            }
+
+            numberElement.textContent = secretNumber;
+            scoreElement.textContent = score;
+
+            // Debugging: Log the state after confirm action
+            console.log('Secret Number:', secretNumber);
+            console.log('Score:', score);
+            console.log('Message:', messageElement.textContent);
+        }
+
+        // Attach event listeners
+        function attachEventListeners() {
+            const { againButton, confirmButton } = getElements();
+
+            if (againButton) {
+                againButton.addEventListener('click', function() {
+                    console.log('Again button clicked');
+                    resetGame();
+                });
+            } else {
+                console.error('No element with class "again" found.');
+            }
+
+            if (confirmButton) {
+                confirmButton.addEventListener('click', function() {
+                    console.log('Confirm button clicked');
+                    confirmAction();
+                });
+            } else {
+                console.error('No element with class "confirm" found.');
+            }
+        }
+
+        // Initialize the game
+        attachEventListeners();
+    </script>
+</body>
+</html>
